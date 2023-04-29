@@ -1,11 +1,15 @@
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from flask import Flask, jsonify
 
-app = dash.Dash()
-app.layout = html.Div([
-		html.H1("Este es prueba dB"),
-		#dcc.Graph(figure=fig)
-		])
+app = Flask(__name__)
 
-app.run_server(host='0.0.0.0',port=80)
+names = ['Chucho', 'Benju', 'Mafe']
+passwords = ['1234', 'abcd', 'qwerty']
+
+
+@app.route('/users')
+def get_users():
+    users = [{'nombre': nombre, 'contraseña': contraseña} for nombre, contraseña in zip(names, passwords)]
+    return jsonify(users)
+
+if __name__ == '__main__':
+   app.run(host='0.0.0.0',port=80)
