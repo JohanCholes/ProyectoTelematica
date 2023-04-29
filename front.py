@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State
 
 import requests
 
-url = "http://35.153.255.170:5000/mostrar_estacionesnivel?psw=12345678"
+url = "http://54.175.179.159:5000/mostrar_estacionesnivel?psw=12345678"
 data = pd.read_json(url,convert_dates='True')
 
 latr = []
@@ -24,11 +24,13 @@ fig = go.Figure(go.Densitymapbox(lat=latr,lon=lonr,z=zr,radius=20, opacity=0.9, 
 fig.update_layout(mapbox_style="stamen-terrain",mapbox_center_lon=-75.589,mapbox_center_lat=6.2429)
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
-urldB = 'http://35.153.255.170:80/users'
+urldB = 'http://54.175.179.159:80/users'
 
 response = requests.get(urldB)
 
 app = dash.Dash()
+
+
 
 if response.status_code == 200:
    data = response.json()
@@ -52,12 +54,19 @@ if response.status_code == 200:
 
 
    def validar(n_clicks, usuario, contrasena):
+       coincidencia = False
        if n_clicks:
            for usuariodB in data:
                if usuariodB['nombre'] == usuario and usuariodB['contraseña'] == contrasena:
-                  return html.Div('¡Bienvenido, {}!'.format(usuario))
-               else:
-                  return html.Div('El usuario o la contraseña son incorrectos.')
+                  coincidencia = True
+                  #return html.Div('¡Bienvenido, {}!'.format(usuario))
+                  break
+           if coincidencia:
+               return html.Div([html.H1("PROYECTO API SIATA"),dcc.Graph(figure=fig)])
+           else:
+               return html.Div('Usuario o contraseña incorrectos.')
+
+
 #           if usuario == 'admin' and contrasena == 'admin':
 #               return html.Div('¡Bienvenido, {}!'.format(usuario))
 #           else:
